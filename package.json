@@ -1,0 +1,20 @@
+{
+  "name": "amqp-mail",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.4.2",
+    "ejs": "^2.5.2",
+    "email-templates": "^2.5.3",
+    "email-transporter": "^1.0.0",
+    "express": "^4.14.0",
+    "nodemailer": "^2.6.4"
+  }
+}

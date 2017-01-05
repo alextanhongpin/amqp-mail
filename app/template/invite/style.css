@@ -1,0 +1,22 @@
+  * {
+    padding: 0;
+    margin: 0;
+  }
+  body {
+    background: white;
+    font-family: Arial;
+
+  }
+  header {
+    background: black;
+  }
+  header h1 {
+    color: white;
+    padding: 5px 10px;
+  }
+  main {
+    padding: 20px;
+  }
+  main p {
+    line-height: 1.5em;
+  }
