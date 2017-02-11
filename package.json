@@ -5,16 +5,17 @@
   "main": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.4.2",
+    "body-parser": "^1.16.1",
     "ejs": "^2.5.2",
     "email-templates": "^2.5.3",
-    "email-transporter": "^1.0.0",
     "express": "^4.14.0",
-    "nodemailer": "^2.6.4"
+    "nodemailer": "^2.6.4",
+    "nodemon": "^1.11.0"
   }
 }
