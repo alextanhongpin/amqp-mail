@@ -4,7 +4,7 @@ const path = require('path')
 const ejs = require('ejs')
 
 class Endpoint {
-  constructor({ service, amqpConn, schema }) {
+  constructor ({ service, amqpConn, schema }) {
     this.service = service
     this.amqpConn = amqpConn
     this.schema = schema
@@ -41,10 +41,10 @@ class Endpoint {
           request = SchemaNormalizer([
             this.schema.key(req.body),
             this.schema.email(req.body),
-            this.schema.newsletter({ payload: req.body }),
+            this.schema.newsletter({ payload: req.body })
           ])
           break
-        default: 
+        default:
           return res.status(400).json({
             error: 'Bad request',
             description: 'Unhandled routing key ' + parsedRequest.key
@@ -63,7 +63,7 @@ class Endpoint {
       const message = JSON.stringify(request)
       const exchange = 'email'
 
-      this.amqpConn.createChannel().then((channel) => { 
+      this.amqpConn.createChannel().then((channel) => {
         const emailExchange = channel.assertExchange(exchange, 'topic', { durable: false })
 
         emailExchange.then((ex) => {
@@ -86,7 +86,7 @@ class Endpoint {
   newsletter (req, res) {
     SchemaNormalizer([
       this.schema.email(req.body),
-      this.schema.newsletter({ payload: req.body }),
+      this.schema.newsletter({ payload: req.body })
     ])
     .then((request) => this.service.newsletter(request))
     .then((data) => {

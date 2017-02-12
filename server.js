@@ -10,7 +10,6 @@ const PORT = process.env.PORT
 
 const EmailService = require('./email-service/transport.js')
 
-
 app.use(helmet())
 app.use(compression())
 
@@ -23,6 +22,6 @@ amqp.then((amqpConn) => {
   // Setup AMQP transport
   EmailService.amqp({ amqpConn })
   app.listen(PORT, () => {
-      console.log(`listening to port *:${PORT}.\npress ctrl + c to cancel`)
+    console.log(`listening to port *:${PORT}.\npress ctrl + c to cancel`)
   })
 })
