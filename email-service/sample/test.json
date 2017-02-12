@@ -1,0 +1,7 @@
+{
+    "from": "john.doe@mail.com",
+    "to": "alexander.hongpin@gmail.com",
+    "subject": "greetings",
+    "html": "hello world",
+    "text": "hello world"
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost:3000/schemas/newsletter.json#",
+  "title": "Newsletter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "payload" ],
+  "properties": {
+    "payload": {
+      "type": "object",
+      "required": [ "name", "surname", "id" ],
+      "properties": {
+        "name": {
+          "$ref": "defs.json#/definitions/nonEmptyString"
+        },
+        "surname": {
+          "$ref": "defs.json#/definitions/nonEmptyString"
+        },
+        "id": {
+          "$ref": "defs.json#/definitions/nonEmptyString"
+        }
+      }
+    }
+  }
+}

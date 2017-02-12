@@ -1,9 +1,7 @@
 // email-factory.js
-const EmailTemplate = require('email-templates').EmailTemplate
-const path = require('path')
-const templateDir = path.join(__dirname, 'templates', 'newsletter')
-const newsletter = new EmailTemplate(templateDir)
 
+const TemplateGenerator = require('../modules/template-generator.js')
+const newsletter = TemplateGenerator('newsletter')
 
 class EmailService {
   constructor ({ nodemailer }) {
@@ -20,34 +18,25 @@ class EmailService {
   send (mailOptions) {
     return new Promise((resolve, reject) => {
       this.transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(info)
-        }
+        error ? reject(error) : resolve(info)
       })
     })
   }
 
+  // Description: Send the newsletter to a list of recipients
   newsletter ({ from, to, subject, payload }) {
-    return newsletter.render({
-      name: payload.name,
-      surname: payload.surname,
-      id: payload.id
-    }).then(({ html, text }) => {
-      return new Promise((resolve, reject) => {
-        this.transporter.sendMail({
-          from, to, subject, html, text
-        }, (error, info) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(info)
-          }
-        })
+    return newsletter.render(payload)
+    .then(({ html, text }) => {
+      return this.send({
+        from, to, subject, html, text
       })
     })
   }
+  // Alias: Forgot Password
+  resetPassword () {}
+  verifyEmail () {}
+  welcome () {}
+
 }
 
 module.exports = function init () {

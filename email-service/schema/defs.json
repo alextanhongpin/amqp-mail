@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost:3000/schemas/defs.json#",
+  "title": "Defs",
+  "definitions": {
+    "email": {
+      "type": ["string"],
+      "format": "email" 
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

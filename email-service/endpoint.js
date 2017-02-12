@@ -1,55 +1,73 @@
-const mailOptions = {
-    from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
-    to: 'alextan220990@gmail.com', // list of receivers
-    subject: 'Hello ✔', // Subject line
-    text: 'Hello world ?', // plain text body
-    html: '<b>Hello world ?</b>' // html body
-}
+const SchemaNormalizer = require('../modules/schema-normalizer.js')
+const fs = require('fs')
+const path = require('path')
+const ejs = require('ejs')
 
 class Endpoint {
-  constructor({ service, amqpConn }) {
+  constructor({ service, amqpConn, schema }) {
     this.service = service
     this.amqpConn = amqpConn
+    this.schema = schema
   }
   test (req, res) {
-    this.service.send(mailOptions)
+    // Flatten request
+    SchemaNormalizer([
+      this.schema.email(req.body),
+      this.schema.template(req.body)
+    ])
+    .then((request) => this.service.send(request))
     .then((data) => {
       res.status(200).json({
         ok: true,
         data: data
       })
-    }).catch((error) => {
+    }).catch((errors) => {
       res.status(400).json({
-        error: error
+        error: {
+          errors,
+          code: 400,
+          message: 'Bad Request'
+        }
       })
     })
   }
-  producer (req, res) {
-    console.log('GET /producer')
-    const key = req.query.key || 'email.newsletter'
-    const validKeys = new Set(['email.invite', 'email.newsletter'])
-    const message = JSON.stringify({
-      from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
-      to: 'alextan220990@gmail.com', // list of receivers
-      subject: 'Hello ✔', // Subject line
-      payload: {
-        name: 'John Doe',
-        surname: 'john.doe',
-        id: 1
+  queue (req, res) {
+    // Need nested if else to determine the type of request
+    this.schema.key(req.body)
+    .then((parsedRequest) => {
+      let request = null
+      switch (parsedRequest.key) {
+        case 'email.newsletter':
+          request = SchemaNormalizer([
+            this.schema.key(req.body),
+            this.schema.email(req.body),
+            this.schema.newsletter({ payload: req.body }),
+          ])
+          break
+        default: 
+          return res.status(400).json({
+            error: 'Bad request',
+            description: 'Unhandled routing key ' + parsedRequest.key
+          })
       }
+      return request
     })
-    if (!validKeys.has(key)) {
-      return res.status(400).json({
-        error: 'Invalid key, unable to process email'
-      })
-    } else {
+    .then((request) => {
+      // Query to check if an email has been sent
+      // Model.findOne({ email, from, to, deliveryStatus, event })
+
+      // Store validated request to mongodb
+
+      // AMQP supports buffer, which accepts only stringified strings
+      // Stringify the request
+      const message = JSON.stringify(request)
       const exchange = 'email'
 
       this.amqpConn.createChannel().then((channel) => { 
         const emailExchange = channel.assertExchange(exchange, 'topic', { durable: false })
 
         emailExchange.then((ex) => {
-          channel.publish(ex.exchange, key, new Buffer(message))
+          channel.publish(ex.exchange, request.key, new Buffer(message))
 
           res.status(200).json({
             success: true,
@@ -57,19 +75,20 @@ class Endpoint {
           })
         })
       })
-    }
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error,
+        message: 'Invalid routing'
+      })
+    })
   }
   newsletter (req, res) {
-    this.service.newsletter({
-      from: '"Fred Foo 👻" <foo@blurdybloop.com>', // sender address
-      to: 'alextan220990@gmail.com', // list of receivers
-      subject: 'Hello ✔', // Subject line
-      payload: {
-        name: 'John Doe',
-        surname: 'john.doe',
-        id: 1
-      }
-    })
+    SchemaNormalizer([
+      this.schema.email(req.body),
+      this.schema.newsletter({ payload: req.body }),
+    ])
+    .then((request) => this.service.newsletter(request))
     .then((data) => {
       res.status(200).json({
         ok: true,
@@ -79,6 +98,21 @@ class Endpoint {
       res.status(400).json({
         error: error
       })
+    })
+  }
+  // Display the target tempalte
+  view (req, res) {
+    const templateName = req.params.template
+    const template = fs.readFileSync(path.join(__dirname, 'templates', templateName, 'html.ejs'), 'utf-8')
+    res.end(ejs.render(template, {
+      name: 'john',
+      surname: 'john.doe',
+      id: 1
+    }))
+  }
+  healthCheck (req, res) {
+    res.status(200).json({
+      ok: true
     })
   }
 }

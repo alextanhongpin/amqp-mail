@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost:3000/schemas/email.json#",
+  "title": "Email",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "from", "to", "subject" ],
+  "properties": {
+    "from": {
+      "$ref": "defs.json#/definitions/email"
+    },
+    "to": {
+      "$ref": "defs.json#/definitions/email"
+    },
+    "subject": {
+      "$ref": "defs.json#/definitions/nonEmptyString"
+    }
+  }
+}

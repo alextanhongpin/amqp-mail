@@ -1,0 +1,9 @@
+{
+    "from": "john.doe@mail.com",
+    "to": "alexander.hongpin@gmail.com",
+    "subject": "greetings",
+    "name": "johnDoe",
+    "surname": "john.doe",
+    "id": "1",
+    "key": "email.newsletter"
+}

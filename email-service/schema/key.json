@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost:3000/schemas/key.json#",
+  "title": "Key",
+  "description": "Validates the routing key for amqp",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "key" ],
+  "properties": {
+    "key": {
+      "type": "string",
+      "enum": ["email.invite", "email.newsletter"]
+    }
+  }
+}

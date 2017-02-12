@@ -12,7 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 amqp.then((amqpConn) => {
-  app.use('/api/v1/emails', EmailService({ amqpConn }))
+  // Setup HTTP transport
+  app.use('/api/v1/emails', EmailService.http({ amqpConn }))
+  // Setup AMQP transport
+  EmailService.amqp({ amqpConn })
   app.listen(PORT, () => {
       console.log(`listening to port *:${PORT}.\npress ctrl + c to cancel`)
   })
