@@ -50,3 +50,10 @@ Sometimes you need to work with the flattened results of the schema
 ### Template Generator
 
 Makes the ease of creating
+
+
+## Useful nodejs modules
+
+1. compression
+2. body-parser
+3. helmet

@@ -1,12 +1,18 @@
 const express = require('express')
+const bodyParser = require('body-parser')
+const helmet = require('helmet')
+
 const amqp = require('./common/amqp.js')
+const compression = require('compression')
 
 const app = express()
 const PORT = process.env.PORT
 
 const EmailService = require('./email-service/transport.js')
 
-const bodyParser = require('body-parser')
+
+app.use(helmet())
+app.use(compression())
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
